@@ -1,4 +1,9 @@
 package binarySearchTree;
+
+
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * every tree node has a unique key
  * The insertion, search and delete all guarantee O(log n) time
@@ -26,13 +31,20 @@ public class BST<T> {
 		return containsKey(k, root);
 	}
 	@SuppressWarnings("unchecked")
-	private boolean containsKey(Comparable<T> k, TreeNode<T> root) {
-		if (root == null)
+	protected boolean containsKey(Comparable<T> k, TreeNode<T> root) {
+		if (root == null){
+			System.out.println("Null root");
 			return false;
-		if (root.key == k)
+		}
+		if (root.key == k){
+			System.out.println("right key");
 			return true;
-		if (root.key.compareTo((T) k) > 0)
+		}
+		if (root.key.compareTo((T) k) > 0){
+			System.out.println("left subtree");
 			return containsKey(k, root.left);
+		}
+		System.out.println("right subtree");
 		return containsKey(k, root.right);
 	}
 	
@@ -120,6 +132,61 @@ public class BST<T> {
 		if (root.left == null)
 			return root;
 		return getMinimum(root.left);
+	}
+	/**
+	 * if it is an empty tree
+	 * @return
+	 */
+	public boolean isEmpty(){
+		return root == null;
+	}
+	/*****************************************
+	 * check integrity
+	 *****************************************/
+	protected boolean isBST(){
+		return isBST(root, null, null);
+	}
+	@SuppressWarnings("unchecked")
+	private boolean isBST(TreeNode<T> root, Comparable<T> min, Comparable<T> max){
+		if(root == null)
+			return true;
+		if(min != null && root.key.compareTo((T)min) <= 0) return false;
+		if(max != null && root.key.compareTo((T)max) >= 0) return false;
+		return isBST(root.left, min, root.key) && isBST(root.right, root.key, max);
+	}
+	public boolean isBalanced(){
+		return depth(root) != -1;
+	}
+	private int depth(TreeNode<T> root){
+		if(root == null)
+			return 0;
+		int left = depth(root.left);
+		int right = depth(root.right);
+		if(left == -1 || right == -1 || Math.abs(left - right) > 1)
+			return -1;
+		return Math.max(left, right) + 1;
+	}
+	public void printTree ()
+	{
+		if (root == null)
+			return;
+		Queue<TreeNode<T>> queue = new LinkedList<TreeNode<T>> ();
+		queue.offer(root);
+		while (!queue.isEmpty())
+		{
+			int size = queue.size();
+			for (int i = 0; i < size; i++)
+			{
+				TreeNode<T> head = queue.poll();
+				System.out.print(head.key + " ");
+				if(head.left != null)
+					queue.offer(head.left);
+				if(head.right != null)
+					queue.offer(head.right);
+			}
+			System.out.println("");
+
+		}
 	}
 
 }
